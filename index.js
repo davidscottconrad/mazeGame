@@ -1,5 +1,6 @@
 const {Engine, Render, Runner, World, Bodies} = Matter;
 
+const cells = 3;
 const width = 1200;
 const height = 600;
 
@@ -31,7 +32,68 @@ const walls = [
 
 World.add(world, walls);
 
+const shuffle = (arr) => {
+    let counter = arr.length;
 
-const grid = Array(3).fill(null).map(() => Array(4).fill(false)); //map a new array to every element in the array. 
+    while (counter > 0){
+        const index = Math.floor(Math.random()* counter);
+        counter--;
+        const temp = arr[counter];
+        arr[counter] = arr[index];
+        arr[index] = temp;
+    }
+    return arr;
+}
+
+const grid = Array(cells)
+.fill(null)
+.map(() => Array(cells).fill(false)); //map a new array to every element in the array. 
 //This avoids a JS problem, where the array is not unique if you use a 2nd Array()
-console.log(grid)
+
+
+const verticals = Array(cells).fill(null).map(() => Array(cells - 1).fill(false));
+const horizontals = Array(cells - 1).fill(null).map(() => Array(cells).fill(false));
+
+const startRow = Math.floor(Math.random() * cells);
+const startColumn = Math.floor(Math.random() * cells);
+
+
+
+const stepThroughCell = (row, column) => {
+    if(grid[row][column]){
+        return;
+    }
+    grid[row][column] = true;
+
+    const neighbors = shuffle([
+        [row -1, column, 'up'],
+        [row, column+1, 'right'],
+        [row +1, column, 'down'],
+        [row, column-1, 'left']
+    ]);
+    for(let neighbor of neighbors){
+        const [nextRow, nextColumn, direction] = neighbor;
+        if (nextRow < 0 || nextRow >= cells || nextColumn < 0 || nextColumn >= cells){
+            continue;
+        }
+        if(grid[nextRow][nextColumn]){
+            continue;
+        }
+
+        if(direction === 'left'){
+            verticals[row][column - 1]
+        }else if (direction === 'right'){
+            verticals[row][column] = true;
+        }else if (direction === 'up'){
+            horizontals[row -1][column]  = true;
+        }else if(direction === 'down'){
+            horizontals[row][column] = true;
+        }
+
+        stepThroughCell(nextRow, nextColumn);
+
+    }
+};
+
+stepThroughCell(startRow, startColumn);
+//stepThroughCell(1, 1);
