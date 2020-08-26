@@ -32,6 +32,6 @@ const walls = [
 World.add(world, walls);
 
 
-const grid = Array(3).fill(null).map(() => Array(3).fill(false)); //map a new array to every element in the array. 
+const grid = Array(3).fill(null).map(() => Array(4).fill(false)); //map a new array to every element in the array. 
 //This avoids a JS problem, where the array is not unique if you use a 2nd Array()
 console.log(grid)
